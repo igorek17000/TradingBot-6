@@ -144,6 +144,55 @@ def tick():
             absOrderAmount=float(el9.get())
         except:
             absOrderAmount=0
+
+        try:
+            reorderamount-float(el10.get())/100
+        except:
+            reorderamount=1
+
+        if reorderamount >=leverage:
+            Leverage=round (leverage+(reorderamount-leverage) ,1) +1
+            print(str(leverage)+'x'+' <-New Leverage')
+
+        try:
+            losscut = float(el.get())/100
+        except:
+            losscut=1
+        try:
+            profitcut=float(el13.get())/100
+        except:
+            profit=1
+
+        profittarget1=float(el14.get())/100
+        profitcut1=float (el15.get())/100
+        proftittaget2=float(el16.get())/100
+        profitcut2=float(el17.get())/100
+
+        insert=0
+        insert2=0
+        insert3=0
+
+        now=datetime.now()
+        current_time=now.strftime("(%H : % : %S )")
+        print (current_time)
+
+        info=client.futures_exchange_info()
+
+        for item in info['symbols']:
+            if item['symbol']==symbol:
+                symbols_n_precision=item[ 'quantityPrecision' ]
+
+        try:
+            client.futures_change_leverage(symbol=symbol, leverage=leverage)
+        except:
+            pass
+
+        try:
+            client.futures_change_margin_type(symbol=symbol, marginType="CROSSED")
+        except:
+            pass
+
+        time. sleep(0.5)
         
 
 
