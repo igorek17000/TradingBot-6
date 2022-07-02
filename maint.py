@@ -174,7 +174,7 @@ def tick():
 
         now=datetime.now()
         current_time=now.strftime("(%H : % : %S )")
-        print (current_time)
+        print(current_time)
 
         info=client.futures_exchange_info()
 
@@ -192,7 +192,73 @@ def tick():
         except:
             pass
 
-        time. sleep(0.5)
+        time.sleep(0.5)
+
+        url = "https://fapi.binance.com/fapi/v1/trades?symbol=" + symbol + '&interval='+str(timeinterval)+'m'+'&limit=100'
+
+        data = requests.get(url).json()
+
+        D = pd.DataFrame(data)
+
+        D.columns = ['open_time', "open", "high", "low", "close", "volume", "close_time", "qav", "num_trades",
+"taker_base_vol", "taker_quote_vol", "is_best_match"]
+
+        D["open_date_time"] = [dt.datetime.fromtimestamp(x / 1000) for x in D.open_time]
+        D['symbol'] = symbol
+        D= D[["symbol", "open_date time", "open", "high", "low", "close", "volume", "num_trades", "taker_base_vol", "taker_quote_vol"]]
+        df = D.set_index("open_date_time")
+    
+        marketprice='fapi.binance. com/fapi/v1/ticker/24hr?symbol=' + symbol
+        res=requests.get(marketprice)
+        data=res.json()
+        price=float(data['lastPrice'])
+        df['open']=df['open'].astype(float)
+        df2=df['open'].to_numpy()
+
+        df=pf.DataFrame(df2, columns=['open'])
+        exp1=df['open'].ewm(span=short, adjust=False) .mean()
+        exp2=df['open'].ewm(span=long, adjust=False) .mean()
+        macd=exp1-exp2
+
+        exp3=macd.ewm(span=signal, adjust=False).mean()
+
+        test1=exp3.iloc[-1]-macd.iloc[-1]
+
+        for i in range(2, len(df)):
+            test2=exp3.iloc[-i]-macd.iloc[i]
+
+            if test1>0 and test2<0:
+                break
+
+            if test1<0 and test2>0:
+                break
+
+        test3=exp.iloc[-2]-macd.ilocp[-2]
+
+        call='N/A'
+        call1='N/A'
+
+        if test1<0 and test2>0 and abs(test1)>=buyd:
+            if test3/test1>0 and abs(test3)<buyd:       
+                call1='Goldencross for entry'
+            if test3/test1<0:
+                call1='Goldencross for entry'
+
+        if test1>0 and test2<0 and abs(test1)>=buyd:
+            if test3/test1>0 and abs(test3)<buyd:
+                call1='Deadcross for entry'
+            if test3/test1<0:
+                call1='Deadcross for entry'
+
+        if test1<0 and test2>0:
+            call='Goldencross'
+
+        if test1>0 and test2<0:
+            call='Deadcross'
+
+        print(call)
+        print(call1)
+
         
 
 
@@ -200,120 +266,117 @@ def tick():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 root.mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
